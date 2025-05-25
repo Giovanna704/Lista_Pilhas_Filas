@@ -1,0 +1,75 @@
+//8.Impressão Reversa com Pilha: Use uma pilha para imprimir os elementos da lista em ordem reversa.
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct No {
+    int dado;
+    struct No* prox;
+} No;
+
+void inserir_fim(No** lista, int valor) {
+    No* novo = (No*)malloc(sizeof(No));
+    novo->dado = valor;
+    novo->prox = NULL;
+
+    if (*lista == NULL) {
+        *lista = novo;
+    } else {
+        No* atual = *lista;
+        while (atual->prox != NULL) {
+            atual = atual->prox;
+        }
+        atual->prox = novo;
+    }
+}
+
+void imprimir_lista(No* lista) {
+    No* atual = lista;
+    while (atual != NULL) {
+        printf("%d -> ", atual->dado);
+        atual = atual->prox;
+    }
+    printf("NULL\n");
+}
+
+void imprimir_reverso_com_pilha(No* lista) {
+    No* pilha = NULL;
+
+    No* atual = lista;
+    while (atual != NULL) {
+        No* novo = (No*)malloc(sizeof(No));
+        novo->dado = atual->dado;
+        novo->prox = pilha;
+        pilha = novo;
+        atual = atual->prox;
+    }
+
+    No* aux = pilha;
+    while (aux != NULL) {
+        printf("%d -> ", aux->dado);
+        aux = aux->prox;
+    }
+    printf("NULL\n");
+
+    while (pilha != NULL) {
+        No* temp = pilha;
+        pilha = pilha->prox;
+        free(temp);
+    }
+}
+
+int main() {
+    No* lista = NULL;
+
+    inserir_fim(&lista, 10);
+    inserir_fim(&lista, 20);
+    inserir_fim(&lista, 30);
+    inserir_fim(&lista, 40);
+    inserir_fim(&lista, 50);
+
+    imprimir_lista(lista);
+
+    imprimir_reverso_com_pilha(lista);
+
+    return 0;
+}
