@@ -1,0 +1,92 @@
+/* 
+15.Fila com Array Circular:.
+- Implemente uma fila usando um array circular com tamanho fixo (ex: int fila[100]).
+- Funções: enfileirar, desenfileirar, frente.
+*/
+
+#include <stdio.h>
+
+#define TAMANHO 100
+
+typedef struct {
+    int dados[TAMANHO];
+    int frente;
+    int tras;
+    int quantidade;
+} Fila;
+
+void inicializar(Fila* f) {
+    f->frente = 0;
+    f->tras = -1;
+    f->quantidade = 0;
+}
+
+int esta_vazia(Fila* f) {
+    return f->quantidade == 0;
+}
+
+int esta_cheia(Fila* f) {
+    return f->quantidade == TAMANHO;
+}
+
+int enfileirar(Fila* f, int valor) {
+    if (esta_cheia(f)) {
+        return 0;
+    }
+    f->tras = (f->tras + 1) % TAMANHO;
+    f->dados[f->tras] = valor;
+    f->quantidade++;
+    return 1;
+}
+
+int desenfileirar(Fila* f, int* valor) {
+    if (esta_vazia(f)) {
+        return 0;
+    }
+    *valor = f->dados[f->frente];
+    f->frente = (f->frente + 1) % TAMANHO;
+    f->quantidade--;
+    return 1;
+}
+
+int frente(Fila* f) {
+    if (esta_vazia(f)) {
+        return -1;
+    }
+    return f->dados[f->frente];
+}
+
+void exibir(Fila* f) {
+    if (esta_vazia(f)) {
+        printf("Fila vazia.\n");
+        return;
+    }
+    printf("Fila: ");
+    int idx = f->frente;
+    for (int i = 0; i < f->quantidade; i++) {
+        printf("%d ", f->dados[idx]);
+        idx = (idx + 1) % TAMANHO;
+    }
+    printf("\n");
+}
+
+int main() {
+    Fila f;
+    inicializar(&f);
+
+    enfileirar(&f, 10);
+    enfileirar(&f, 20);
+    enfileirar(&f, 30);
+
+    exibir(&f);
+
+    int valor;
+    desenfileirar(&f, &valor);
+    printf("Desenfileirado: %d\n", valor);
+
+    exibir(&f);
+
+    printf("Frente da fila: %d\n", frente(&f));
+
+    return 0;
+}
