@@ -1,0 +1,77 @@
+//Inserção em Posição Específica: Crie uma função inserir_posicao que adicione um nó em uma posição específica (ex: posição 2 em 0-indexada).
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct No {
+    int dado;
+    struct No* prox;
+} No;
+
+void inserir_posicao(No** lista, int valor, int pos) {
+    No* novo = (No*)malloc(sizeof(No));
+    novo->dado = valor;
+    novo->prox = NULL;
+
+    if (pos == 0) {
+        novo->prox = *lista;
+        *lista = novo;
+        return;
+    }
+
+    No* atual = *lista;
+    int i = 0;
+
+    while (atual != NULL && i < pos - 1) {
+        atual = atual->prox;
+        i++;
+    }
+
+    if (atual == NULL) {
+        free(novo);
+        return;
+    }
+
+    novo->prox = atual->prox;
+    atual->prox = novo;
+}
+
+void inserir_fim(No** lista, int valor) {
+    No* novo = (No*)malloc(sizeof(No));
+    novo->dado = valor;
+    novo->prox = NULL;
+
+    if (*lista == NULL) {
+        *lista = novo;
+    } else {
+        No* atual = *lista;
+        while (atual->prox != NULL) {
+            atual = atual->prox;
+        }
+        atual->prox = novo;
+    }
+}
+
+void imprimir_lista(No* lista) {
+    No* atual = lista;
+    while (atual != NULL) {
+        printf("%d -> ", atual->dado);
+        atual = atual->prox;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    No* lista = NULL;
+
+    inserir_fim(&lista, 10);
+    inserir_fim(&lista, 20);
+    inserir_fim(&lista, 30);
+
+    inserir_posicao(&lista, 15, 1);
+    inserir_posicao(&lista, 5, 0);
+    inserir_posicao(&lista, 25, 4);
+
+    imprimir_lista(lista);
+
+    return 0;
+}
