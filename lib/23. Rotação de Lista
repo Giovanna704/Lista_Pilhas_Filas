@@ -1,0 +1,101 @@
+/*
+23.Rotação de Lista:
+Implemente uma função rotacionar_lista que rotacione a lista em K posições
+(ex: 1→2→3→4→5, K=2 → 4→5→1→2→3).
+*/
+
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct No {
+    int dado;
+    struct No* prox;
+} No;
+
+No* criar_no(int valor) {
+    No* novo = (No*)malloc(sizeof(No));
+    novo->dado = valor;
+    novo->prox = NULL;
+    return novo;
+}
+
+void inserir_fim(No** lista, int valor) {
+    No* novo = criar_no(valor);
+    if (*lista == NULL) {
+        *lista = novo;
+        return;
+    }
+    No* temp = *lista;
+    while (temp->prox != NULL) {
+        temp = temp->prox;
+    }
+    temp->prox = novo;
+}
+
+void exibir_lista(No* lista) {
+    No* temp = lista;
+    while (temp != NULL) {
+        printf("%d ", temp->dado);
+        temp = temp->prox;
+    }
+    printf("\n");
+}
+
+int tamanho_lista(No* lista) {
+    int tamanho = 0;
+    while (lista != NULL) {
+        tamanho++;
+        lista = lista->prox;
+    }
+    return tamanho;
+}
+
+void rotacionar_lista(No** lista, int k) {
+    if (*lista == NULL || k == 0) return;
+
+    int tam = tamanho_lista(*lista);
+    k = k % tam;
+    if (k == 0) return;
+
+    No* atual = *lista;
+    No* novo_final = NULL;
+    No* novo_inicio = NULL;
+
+    int corte = tam - k;
+
+    for (int i = 1; i < corte; i++) {
+        atual = atual->prox;
+    }
+
+    novo_final = atual;
+    novo_inicio = atual->prox;
+
+    No* temp = novo_inicio;
+    while (temp->prox != NULL) {
+        temp = temp->prox;
+    }
+
+    temp->prox = *lista;
+    novo_final->prox = NULL;
+    *lista = novo_inicio;
+}
+
+int main() {
+    No* lista = NULL;
+
+    inserir_fim(&lista, 1);
+    inserir_fim(&lista, 2);
+    inserir_fim(&lista, 3);
+    inserir_fim(&lista, 4);
+    inserir_fim(&lista, 5);
+
+    printf("Lista original: ");
+    exibir_lista(lista);
+
+    int k = 2;
+    rotacionar_lista(&lista, k);
+
+    printf("Lista rotacionada em %d: ", k);
+    exibir_lista(lista);
+    return 0;
+}
