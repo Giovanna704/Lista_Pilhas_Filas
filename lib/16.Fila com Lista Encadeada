@@ -1,0 +1,88 @@
+//16. Fila com Lista Encadeada: Implemente uma fila usando uma lista encadeada (com ponteiros para início e fim).
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct No {
+    int dado;
+    struct No* proximo;
+} No;
+
+typedef struct {
+    No* inicio;
+    No* fim;
+} Fila;
+
+void inicializarFila(Fila* fila) {
+    fila->inicio = NULL;
+    fila->fim = NULL;
+}
+
+int estaVazia(Fila* fila) {
+    return fila->inicio == NULL;
+}
+
+void enfileirar(Fila* fila, int valor) {
+    No* novo = (No*)malloc(sizeof(No));
+    novo->dado = valor;
+    novo->proximo = NULL;
+
+    if (fila->fim != NULL) {
+        fila->fim->proximo = novo;
+    }
+    fila->fim = novo;
+
+    if (fila->inicio == NULL) {
+        fila->inicio = novo;
+    }
+}
+
+int desenfileirar(Fila* fila) {
+    if (estaVazia(fila)) {
+        return -1;
+    }
+
+    No* temp = fila->inicio;
+    int valor = temp->dado;
+    fila->inicio = temp->proximo;
+
+    if (fila->inicio == NULL) {
+        fila->fim = NULL;
+    }
+
+    free(temp);
+    return valor;
+}
+
+int frente(Fila* fila) {
+    if (estaVazia(fila)) {
+        return -1;
+    }
+    return fila->inicio->dado;
+}
+
+void exibirFila(Fila* fila) {
+    No* atual = fila->inicio;
+    while (atual != NULL) {
+        printf("%d ", atual->dado);
+        atual = atual->proximo;
+    }
+    printf("\n");
+}
+
+int main() {
+    Fila fila;
+    inicializarFila(&fila);
+
+    enfileirar(&fila, 10);
+    enfileirar(&fila, 20);
+    enfileirar(&fila, 30);
+
+    exibirFila(&fila);
+
+    printf("Desenfileirado: %d\n", desenfileirar(&fila));
+    exibirFila(&fila);
+
+    printf("Frente: %d\n", frente(&fila));
+
+    return 0;
+}
