@@ -1,0 +1,103 @@
+/*
+22.Intersecção de Listas:
+- Escreva uma função encontrar_intersecao que retorne o nó onde duas listas se intersectam (se existir).
+*/
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct No {
+    int dado;
+    struct No* prox;
+} No;
+
+No* criar_no(int valor) {
+    No* novo = (No*)malloc(sizeof(No));
+    novo->dado = valor;
+    novo->prox = NULL;
+    return novo;
+}
+
+void inserir_fim(No** lista, int valor) {
+    No* novo = criar_no(valor);
+    if (*lista == NULL) {
+        *lista = novo;
+        return;
+    }
+    No* temp = *lista;
+    while (temp->prox != NULL) {
+        temp = temp->prox;
+    }
+    temp->prox = novo;
+}
+
+int tamanho_lista(No* lista) {
+    int tamanho = 0;
+    while (lista != NULL) {
+        tamanho++;
+        lista = lista->prox;
+    }
+    return tamanho;
+}
+
+No* encontrar_intersecao(No* l1, No* l2) {
+    int tam1 = tamanho_lista(l1);
+    int tam2 = tamanho_lista(l2);
+
+    if (tam1 > tam2) {
+        int diff = tam1 - tam2;
+        for (int i = 0; i < diff; i++) l1 = l1->prox;
+    } else {
+        int diff = tam2 - tam1;
+        for (int i = 0; i < diff; i++) l2 = l2->prox;
+    }
+
+    while (l1 != NULL && l2 != NULL) {
+        if (l1 == l2) return l1;
+        l1 = l1->prox;
+        l2 = l2->prox;
+    }
+
+    return NULL;
+}
+
+void exibir_lista(No* lista) {
+    No* temp = lista;
+    printf("Lista: ");
+    while (temp != NULL) {
+        printf("%d ", temp->dado);
+        temp = temp->prox;
+    }
+    printf("\n");
+}
+
+int main() {
+    No* lista1 = NULL;
+    No* lista2 = NULL;
+
+    inserir_fim(&lista1, 1);
+    inserir_fim(&lista1, 2);
+    inserir_fim(&lista1, 3);
+
+    inserir_fim(&lista2, 9);
+    inserir_fim(&lista2, 8);
+
+    No* intersecao = criar_no(100);
+    lista1->prox->prox->prox = intersecao;
+    lista2->prox->prox = intersecao;
+
+    intersecao->prox = criar_no(200);
+    intersecao->prox->prox = criar_no(300);
+
+    exibir_lista(lista1);
+    exibir_lista(lista2);
+
+    No* resultado = encontrar_intersecao(lista1, lista2);
+
+    if (resultado != NULL) {
+        printf("Intersecao encontrada no valor: %d\n", resultado->dado);
+    } else {
+        printf("Nao ha intersecao.\n");
+    }
+
+    return 0;
+}
