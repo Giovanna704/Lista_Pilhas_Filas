@@ -1,0 +1,86 @@
+//17. Geração de Números Binários: Use uma fila para gerar os primeiros N números binários (ex: para N=3, saída: ["1", "10", "11"]).
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct No {
+    char* valor;
+    struct No* proximo;
+} No;
+
+typedef struct {
+    No* inicio;
+    No* fim;
+} Fila;
+
+void inicializarFila(Fila* fila) {
+    fila->inicio = NULL;
+    fila->fim = NULL;
+}
+
+int estaVazia(Fila* fila) {
+    return fila->inicio == NULL;
+}
+
+void enfileirar(Fila* fila, const char* valor) {
+    No* novo = (No*)malloc(sizeof(No));
+    novo->valor = strdup(valor);
+    novo->proximo = NULL;
+
+    if (fila->fim != NULL) {
+        fila->fim->proximo = novo;
+    }
+    fila->fim = novo;
+
+    if (fila->inicio == NULL) {
+        fila->inicio = novo;
+    }
+}
+
+char* desenfileirar(Fila* fila) {
+    if (estaVazia(fila)) return NULL;
+
+    No* temp = fila->inicio;
+    char* valor = strdup(temp->valor);
+    fila->inicio = temp->proximo;
+    if (fila->inicio == NULL) {
+        fila->fim = NULL;
+    }
+    free(temp->valor);
+    free(temp);
+    return valor;
+}
+
+void gerarBinarios(int N) {
+    Fila fila;
+    inicializarFila(&fila);
+    enfileirar(&fila, "1");
+
+    for (int i = 0; i < N; i++) {
+        char* atual = desenfileirar(&fila);
+        printf("%s\n", atual);
+
+        int len = strlen(atual);
+        char* bin0 = (char*)malloc(len + 2);
+        char* bin1 = (char*)malloc(len + 2);
+
+        strcpy(bin0, atual);
+        strcat(bin0, "0");
+
+        strcpy(bin1, atual);
+        strcat(bin1, "1");
+
+        enfileirar(&fila, bin0);
+        enfileirar(&fila, bin1);
+
+        free(bin0);
+        free(bin1);
+        free(atual);
+    }
+}
+
+int main() {
+    int N = 10;
+    gerarBinarios(N);
+    return 0;
+}
