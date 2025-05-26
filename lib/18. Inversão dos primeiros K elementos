@@ -1,0 +1,140 @@
+/* 
+18. Inversão dos Primeiros K Elementos:
+- Implemente uma função inverter_primeiros_k que inverta os primeiros K elementos de uma fila usando uma pilha.
+*/
+
+#include <stdio.h>
+
+#define TAMANHO 100
+
+typedef struct {
+    int dados[TAMANHO];
+    int topo;
+} Pilha;
+
+typedef struct {
+    int dados[TAMANHO];
+    int frente;
+    int tras;
+    int quantidade;
+} Fila;
+
+// Pilha
+void inicializar_pilha(Pilha* p) {
+    p->topo = -1;
+}
+
+int esta_vazia_pilha(Pilha* p) {
+    return p->topo == -1;
+}
+
+int push(Pilha* p, int valor) {
+    if (p->topo == TAMANHO - 1) {
+        return 0;
+    }
+    p->dados[++p->topo] = valor;
+    return 1;
+}
+
+int pop(Pilha* p, int* valor) {
+    if (esta_vazia_pilha(p)) {
+        return 0;
+    }
+    *valor = p->dados[p->topo--];
+    return 1;
+}
+void inicializar_fila(Fila* f) {
+    f->frente = 0;
+    f->tras = -1;
+    f->quantidade = 0;
+}
+
+int esta_vazia_fila(Fila* f) {
+    return f->quantidade == 0;
+}
+
+int esta_cheia_fila(Fila* f) {
+    return f->quantidade == TAMANHO;
+}
+
+int enfileirar(Fila* f, int valor) {
+    if (esta_cheia_fila(f)) {
+        return 0;
+    }
+    f->tras = (f->tras + 1) % TAMANHO;
+    f->dados[f->tras] = valor;
+    f->quantidade++;
+    return 1;
+}
+
+int desenfileirar(Fila* f, int* valor) {
+    if (esta_vazia_fila(f)) {
+        return 0;
+    }
+    *valor = f->dados[f->frente];
+    f->frente = (f->frente + 1) % TAMANHO;
+    f->quantidade--;
+    return 1;
+}
+
+void inverter_primeiros_k(Fila* f, int k) {
+    if (k > f->quantidade || k <= 0) {
+        return;
+    }
+
+    Pilha p;
+    inicializar_pilha(&p);
+
+    int valor;
+
+    for (int i = 0; i < k; i++) {
+        desenfileirar(f, &valor);
+        push(&p, valor);
+    }
+
+    while (!esta_vazia_pilha(&p)) {
+        pop(&p, &valor);
+        enfileirar(f, valor);
+    }
+
+    int restante = f->quantidade - k;
+    for (int i = 0; i < restante; i++) {
+        desenfileirar(f, &valor);
+        enfileirar(f, valor);
+    }
+}
+
+void exibir_fila(Fila* f) {
+    if (esta_vazia_fila(f)) {
+        printf("Fila vazia.\n");
+        return;
+    }
+    printf("Fila: ");
+    int idx = f->frente;
+    for (int i = 0; i < f->quantidade; i++) {
+        printf("%d ", f->dados[idx]);
+        idx = (idx + 1) % TAMANHO;
+    }
+    printf("\n");
+}
+
+int main() {
+    Fila f;
+    inicializar_fila(&f);
+
+    enfileirar(&f, 1);
+    enfileirar(&f, 2);
+    enfileirar(&f, 3);
+    enfileirar(&f, 4);
+    enfileirar(&f, 5);
+
+    printf("Fila antes da inversao: ");
+    exibir_fila(&f);
+
+    inverter_primeiros_k(&f, 3);
+
+    printf("Fila apos inverter os 3 primeiros: ");
+    exibir_fila(&f);
+
+    return 0;
+}
