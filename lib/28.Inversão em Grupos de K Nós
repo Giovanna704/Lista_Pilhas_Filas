@@ -1,0 +1,81 @@
+// 28.Inversão em Grupos de K Nós: Escreva uma função inverter_grupos que inverta cada grupo de K nós na lista (ex: 1→2→3→4→5, K=2 → 2→1→4→3→5).
+
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct No {
+    int dado;
+    struct No *proximo;
+} No;
+
+No* criar_no(int valor) {
+    No *novo = (No*)malloc(sizeof(No));
+    novo->dado = valor;
+    novo->proximo = NULL;
+    return novo;
+}
+
+void inserir_fim(No **lista, int valor) {
+    No *novo = criar_no(valor);
+    if (*lista == NULL) {
+        *lista = novo;
+    } else {
+        No *atual = *lista;
+        while (atual->proximo != NULL) {
+            atual = atual->proximo;
+        }
+        atual->proximo = novo;
+    }
+}
+
+void imprimir(No *lista) {
+    No *atual = lista;
+    while (atual != NULL) {
+        printf("%d ", atual->dado);
+        atual = atual->proximo;
+    }
+    printf("\n");
+}
+
+No* inverter_grupos(No *cabeca, int k) {
+    No *atual = cabeca;
+    No *anterior = NULL;
+    No *proximo = NULL;
+    int count = 0;
+
+    No *temp = cabeca;
+    for (int i = 0; i < k && temp != NULL; i++) {
+        temp = temp->proximo;
+        count++;
+    }
+    if (count < k) return cabeca;
+
+    count = 0;
+    while (atual != NULL && count < k) {
+        proximo = atual->proximo;
+        atual->proximo = anterior;
+        anterior = atual;
+        atual = proximo;
+        count++;
+    }
+
+    if (proximo != NULL) {
+        cabeca->proximo = inverter_grupos(proximo, k);
+    }
+
+    return anterior;
+}
+
+int main() {
+    No *lista = NULL;
+    inserir_fim(&lista, 1);
+    inserir_fim(&lista, 2);
+    inserir_fim(&lista, 3);
+    inserir_fim(&lista, 4);
+    inserir_fim(&lista, 5);
+
+    lista = inverter_grupos(lista, 2);
+    imprimir(lista);
+
+    return 0;
+}
