@@ -1,0 +1,114 @@
+//24.Pilha com Mínimo em O(1): - Projete uma pilha que suporte push, pop, top e obter_minimo em tempo constante.
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define MAX 100
+
+typedef struct {
+    int dados[MAX];
+    int topo;
+} Pilha;
+
+void inicializar(Pilha* p) {
+    p->topo = -1;
+}
+
+int esta_vazia(Pilha* p) {
+    return p->topo == -1;
+}
+
+int esta_cheia(Pilha* p) {
+    return p->topo == MAX - 1;
+}
+
+void push(Pilha* p, int valor) {
+    if (esta_cheia(p)) {
+        printf("Pilha cheia!\n");
+        return;
+    }
+    p->dados[++(p->topo)] = valor;
+}
+
+int pop(Pilha* p) {
+    if (esta_vazia(p)) {
+        printf("Pilha vazia!\n");
+        return INT_MIN;
+    }
+    return p->dados[(p->topo)--];
+}
+
+int top(Pilha* p) {
+    if (esta_vazia(p)) {
+        printf("Pilha vazia!\n");
+        return INT_MIN;
+    }
+    return p->dados[p->topo];
+}
+
+typedef struct {
+    Pilha principal;
+    Pilha minimos;
+} PilhaComMin;
+
+void inicializar_pilha_min(PilhaComMin* p) {
+    inicializar(&p->principal);
+    inicializar(&p->minimos);
+}
+
+void push_min(PilhaComMin* p, int valor) {
+    push(&p->principal, valor);
+
+    if (esta_vazia(&p->minimos) || valor <= top(&p->minimos)) {
+        push(&p->minimos, valor);
+    }
+}
+
+int pop_min(PilhaComMin* p) {
+    if (esta_vazia(&p->principal)) {
+        printf("Pilha vazia!\n");
+        return INT_MIN;
+    }
+    int valor = pop(&p->principal);
+
+    if (valor == top(&p->minimos)) {
+        pop(&p->minimos);
+    }
+
+    return valor;
+}
+
+int top_min(PilhaComMin* p) {
+    return top(&p->principal);
+}
+
+int obter_minimo(PilhaComMin* p) {
+    if (esta_vazia(&p->minimos)) {
+        printf("Pilha vazia!\n");
+        return INT_MIN;
+    }
+    return top(&p->minimos);
+}
+
+int main() {
+    PilhaComMin p;
+    inicializar_pilha_min(&p);
+
+    push_min(&p, 3);
+    push_min(&p, 5);
+    printf("Minimo: %d\n", obter_minimo(&p)); // 3
+
+    push_min(&p, 2);
+    push_min(&p, 1);
+    printf("Minimo: %d\n", obter_minimo(&p)); // 1
+
+    pop_min(&p);
+    printf("Minimo apos pop: %d\n", obter_minimo(&p)); // 2
+
+    pop_min(&p);
+    printf("Topo: %d\n", top_min(&p));              // 5
+    printf("Minimo: %d\n", obter_minimo(&p));       // 3
+
+    return 0;
+}
