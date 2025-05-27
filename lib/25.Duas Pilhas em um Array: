@@ -1,0 +1,78 @@
+// 25.Duas Pilhas em um Array: Implemente duas pilhas em um único array, otimizando o uso do espaço.
+
+#include <stdio.h>
+#define MAX 100
+
+typedef struct {
+    int arr[MAX];
+    int topo1;
+    int topo2;
+} DuasPilhas;
+
+void inicializar(DuasPilhas* pilhas) {
+    pilhas->topo1 = -1;
+    pilhas->topo2 = MAX;
+}
+
+int esta_vazia1(DuasPilhas* pilhas) {
+    return pilhas->topo1 == -1;
+}
+
+int esta_vazia2(DuasPilhas* pilhas) {
+    return pilhas->topo2 == MAX;
+}
+
+int esta_cheia(DuasPilhas* pilhas) {
+    return pilhas->topo1 + 1 == pilhas->topo2;
+}
+
+void push1(DuasPilhas* pilhas, int valor) {
+    if (esta_cheia(pilhas)) return;
+    pilhas->arr[++(pilhas->topo1)] = valor;
+}
+
+void push2(DuasPilhas* pilhas, int valor) {
+    if (esta_cheia(pilhas)) return;
+    pilhas->arr[--(pilhas->topo2)] = valor;
+}
+
+int pop1(DuasPilhas* pilhas) {
+    if (esta_vazia1(pilhas)) return -1;
+    return pilhas->arr[(pilhas->topo1)--];
+}
+
+int pop2(DuasPilhas* pilhas) {
+    if (esta_vazia2(pilhas)) return -1;
+    return pilhas->arr[(pilhas->topo2)++];
+}
+
+int topo1(DuasPilhas* pilhas) {
+    if (esta_vazia1(pilhas)) return -1;
+    return pilhas->arr[pilhas->topo1];
+}
+
+int topo2(DuasPilhas* pilhas) {
+    if (esta_vazia2(pilhas)) return -1;
+    return pilhas->arr[pilhas->topo2];
+}
+
+int main() {
+    DuasPilhas pilhas;
+    inicializar(&pilhas);
+
+    push1(&pilhas, 1);
+    push1(&pilhas, 2);
+    push2(&pilhas, 100);
+    push2(&pilhas, 99);
+
+    printf("%d\n", topo1(&pilhas));
+    printf("%d\n", topo2(&pilhas));
+
+    printf("%d\n", pop1(&pilhas));
+    printf("%d\n", pop2(&pilhas));
+
+    printf("%d\n", topo1(&pilhas));
+    printf("%d\n", topo2(&pilhas));
+
+    return 0;
+}
