@@ -1,0 +1,60 @@
+// 26.Avaliação de Expressão Pós-fixa: Escreva uma função avaliar_posfixa que calcule o resultado de uma expressão pós-fixa (ex: "3 4 + 2 *" → 14).
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+
+#define MAX 100
+
+typedef struct {
+    int arr[MAX];
+    int topo;
+} Pilha;
+
+void inicializar(Pilha *p) {
+    p->topo = -1;
+}
+
+int esta_vazia(Pilha *p) {
+    return p->topo == -1;
+}
+
+void push(Pilha *p, int val) {
+    if (p->topo < MAX - 1)
+        p->arr[++(p->topo)] = val;
+}
+
+int pop(Pilha *p) {
+    if (!esta_vazia(p))
+        return p->arr[(p->topo)--];
+    return 0;
+}
+
+int avaliar_posfixa(char *expr) {
+    Pilha p;
+    inicializar(&p);
+    char *token = strtok(expr, " ");
+    while(token != NULL) {
+        if (isdigit(token[0]) || (token[0] == '-' && isdigit(token[1]))) {
+            push(&p, atoi(token));
+        } else {
+            int b = pop(&p);
+            int a = pop(&p);
+            switch(token[0]) {
+                case '+': push(&p, a + b); break;
+                case '-': push(&p, a - b); break;
+                case '*': push(&p, a * b); break;
+                case '/': push(&p, a / b); break;
+            }
+        }
+        token = strtok(NULL, " ");
+    }
+    return pop(&p);
+}
+
+int main() {
+    char expr[] = "3 4 + 2 *";
+    printf("%d\n", avaliar_posfixa(expr));
+    return 0;
+}
