@@ -1,0 +1,96 @@
+// 29.Palíndromo com Espaço O(1): Implemente uma função eh_palindromo que verifique se a lista é um palíndromo sem usar estruturas auxiliares (modifique a lista temporariamente).
+
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct No {
+    int dado;
+    struct No *proximo;
+} No;
+
+No* criar_no(int valor) {
+    No *novo = (No*)malloc(sizeof(No));
+    novo->dado = valor;
+    novo->proximo = NULL;
+    return novo;
+}
+
+void inserir_fim(No **lista, int valor) {
+    No *novo = criar_no(valor);
+    if (*lista == NULL) {
+        *lista = novo;
+    } else {
+        No *atual = *lista;
+        while (atual->proximo != NULL) {
+            atual = atual->proximo;
+        }
+        atual->proximo = novo;
+    }
+}
+
+No* inverter_lista(No *cabeca) {
+    No *anterior = NULL;
+    No *atual = cabeca;
+    No *proximo = NULL;
+
+    while (atual != NULL) {
+        proximo = atual->proximo;
+        atual->proximo = anterior;
+        anterior = atual;
+        atual = proximo;
+    }
+    return anterior;
+}
+
+int eh_palindromo(No *cabeca) {
+    if (cabeca == NULL || cabeca->proximo == NULL) return 1;
+
+    No *lento = cabeca;
+    No *rapido = cabeca;
+
+    while (rapido->proximo != NULL && rapido->proximo->proximo != NULL) {
+        lento = lento->proximo;
+        rapido = rapido->proximo->proximo;
+    }
+
+    No *segunda_metade = inverter_lista(lento->proximo);
+
+    No *p1 = cabeca;
+    No *p2 = segunda_metade;
+    int palindromo = 1;
+    while (p2 != NULL) {
+        if (p1->dado != p2->dado) {
+            palindromo = 0;
+            break;
+        }
+        p1 = p1->proximo;
+        p2 = p2->proximo;
+    }
+
+    lento->proximo = inverter_lista(segunda_metade);
+
+    return palindromo;
+}
+
+void imprimir(No *lista) {
+    No *atual = lista;
+    while (atual != NULL) {
+        printf("%d ", atual->dado);
+        atual = atual->proximo;
+    }
+    printf("\n");
+}
+
+int main() {
+    No *lista = NULL;
+    inserir_fim(&lista, 1);
+    inserir_fim(&lista, 2);
+    inserir_fim(&lista, 3);
+    inserir_fim(&lista, 2);
+    inserir_fim(&lista, 1);
+
+    printf("%d\n", eh_palindromo(lista));
+    imprimir(lista);
+
+    return 0;
+}
